@@ -30,4 +30,30 @@ print(totalDifference)
 
 # Part 2 - Computing Similarity Scores (aggregating left list values * frequency in right list)
 
+similarityScore = 0
 
+left = 0
+right = 0
+leftValueFreqInRight = 0
+lastMatch = 0 
+
+while left < len(leftValues) and right < len(rightValues):
+    leftValue = leftValues[left]
+    rightValue = rightValues[right]
+
+    if (rightValue == leftValue):
+        lastMatch = int(leftValue)
+        leftValueFreqInRight += 1
+        right += 1
+
+    if (rightValue < leftValue):
+        similarityScore += leftValueFreqInRight * lastMatch
+        leftValueFreqInRight = 0
+        right += 1
+
+    if (rightValue > leftValue):
+        similarityScore += leftValueFreqInRight * lastMatch
+        leftValueFreqInRight = 0
+        left += 1
+
+print(similarityScore)
