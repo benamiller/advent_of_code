@@ -28,4 +28,6 @@ for i in range(0, len(leftValues)):
 
 print(totalDifference)
 
-# Part 2 - 
+# Part 2 - Computing Similarity Scores (aggregating left list values * frequency in right list)
+
+
