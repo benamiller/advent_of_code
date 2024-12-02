@@ -3,7 +3,7 @@
 numSafe = 0
 lines = []
 
-with open('2test.txt', 'r') as file:
+with open('2.txt', 'r') as file:
 
     lines = file.readlines()
 
@@ -28,6 +28,57 @@ with open('2test.txt', 'r') as file:
 
 # Part 2 - Same as part 1, but we can remove one level (value) to make the report (row) safe
 
+def should_remove_first(nums, candidateOneIndex, candidateTwoIndex, ascending):
+    one = []
+    if candidateOneIndex - 1 >= 0:
+        one.append(nums[candidateOneIndex - 1])
+    if candidateOneIndex + 1 < len(nums):
+        one.append(nums[candidateOneIndex + 1])
+
+    # For 'two', we remove nums[candidateTwoIndex]
+    two = []
+    if candidateTwoIndex - 1 >= 0:
+        two.append(nums[candidateTwoIndex - 1])
+    if candidateTwoIndex + 1 < len(nums):
+        two.append(nums[candidateTwoIndex + 1])
+
+    oneValid = True
+    for i in range(1, len(one)):
+        left = one[i - 1]
+        right = one[i]
+
+        if ascending and right < left:
+            oneValid = False
+        if not ascending and right > left:
+            oneValid = False
+        if left == right:
+            oneValid = False
+        if abs(left - right) > 3:
+            oneValid = False
+
+    twoValid = True
+    for i in range(1, len(two)):
+        left = two[i - 1]
+        right = two[i]
+
+        if ascending and right < left:
+            # print("Should be ascending but isn't")
+            twoValid = False
+        if not ascending and right > left:
+            # print("Should be descending but isn't")
+            twoValid = False
+        if left == right:
+            # print("Both same values")
+            twoValid = False
+        if abs(left - right) > 3:
+            # print("Too big a difference")
+            twoValid = False
+
+    if twoValid and oneValid:
+        return False
+
+    return oneValid 
+
 numSafeWithTolerance = 0
 
 for line in lines:
@@ -48,31 +99,27 @@ for line in lines:
     ascending = ascendingVotes > 0
     valid = True
 
-    # If we remove a breaking value, we must compare the next value with the value before the fix for jumps > 3
-    beforeFixedValue = None
+    i = 1
+    while i < len(nums):
+        if not valid:
+            break
 
-    print("\nNext line\n")
-
-    for i in range(1, len(nums)):
         num = nums[i]
         prevNum = nums[i - 1]
-
-        if beforeFixedValue != None:
-            if abs(beforeFixedValue - num) > 3:
-                valid = False
 
         if abs(prevNum - num) > 3 or prevNum == num or (ascending and prevNum > num) or (not ascending and num > prevNum):
             if numFixes < 1:
                 valid = False
-            beforeFixedValue = prevNum
-            numFixes -= 1
-
-        print("\nThis loop")
-        print("num: " + str(num))
-        print("prevNum: " + str(prevNum))
-        print("ascending: " + str(ascending))
-        print("beforeFixedValue: " + str(beforeFixedValue))
-        print("valid: " + str(valid))
+                break
+            if should_remove_first(nums, i - 1, i, ascending):
+                nums.pop(i - 1)
+                numFixes -= 1
+                i = max(1, i - 1)
+            else:
+                nums.pop(i)
+                numFixes -= 1
+        else:
+            i += 1
 
     if valid:
         numSafeWithTolerance += 1
