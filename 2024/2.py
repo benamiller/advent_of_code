@@ -3,7 +3,7 @@
 numSafe = 0
 lines = []
 
-with open('2.txt', 'r') as file:
+with open('2test.txt', 'r') as file:
 
     lines = file.readlines()
 
@@ -12,6 +12,10 @@ with open('2.txt', 'r') as file:
         nums = line.split()
 
         valid = True
+        if len(nums) < 2:
+            numSafe += 1
+            continue
+
         ascending = int(nums[0]) < int(nums[1])
 
         for i in range(1, len(nums)):
