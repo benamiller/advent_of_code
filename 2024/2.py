@@ -1,6 +1,6 @@
 numSafe = 0
 
-with open('2test.txt', 'r') as file:
+with open('2.txt', 'r') as file:
 
     lines = file.readlines()
 
