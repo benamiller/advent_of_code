@@ -1,4 +1,5 @@
 # Part 1 - Find Safe Sequences (min diff of three, and strictly ascending OR strictly descending)
+import time
 
 numSafe = 0
 lines = []
@@ -83,6 +84,7 @@ def should_remove_first(nums, candidateOneIndex, candidateTwoIndex, ascending):
 
     return oneValid 
 
+start = time.perf_counter()
 numSafeWithTolerance = 0
 
 for line in lines:
@@ -129,4 +131,6 @@ for line in lines:
         numSafeWithTolerance += 1
 
 print(numSafeWithTolerance)
+end = time.perf_counter()
+print(f"Took: {end - start:.4f} seconds")
 
