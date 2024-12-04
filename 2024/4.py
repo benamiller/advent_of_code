@@ -31,46 +31,45 @@ def find_xmas(grid):
 def check_mas(grid, x, y, dx, dy):
     """Check if 'MAS' or 'SAM' exists starting from (x,y) in direction (dx,dy)"""
     rows, cols = len(grid), len(grid[0])
-    forward = ""
+    word = ""
     for i in range(3):  # MAS is 3 characters
         new_x, new_y = x + i * dx, y + i * dy
         if not (0 <= new_x < rows and 0 <= new_y < cols):
             return False
-        forward += grid[new_x][new_y]
-    return forward in ["MAS", "SAM"]
+        word += grid[new_x][new_y]
+    return word in ["MAS", "SAM"]
 
 def find_x_mas(grid):
     rows = len(grid)
     cols = len(grid[0])
     count = 0
     
-    # For each center point of potential X
-    for i in range(1, rows-1):  # Need room for diagonal parts
+    # For each potential center point
+    for i in range(1, rows-1):
         for j in range(1, cols-1):
-            # Check all four possible combinations of X patterns:
-            # 1. Both forward MAS
-            # 2. Both backward SAM
-            # 3. Upper-left to lower-right forward, other backward
-            # 4. Upper-left to lower-right backward, other forward
+            # Check for X pattern
+            # First diagonal: upper-left to lower-right
+            # Second diagonal: upper-right to lower-left
             
-            # Directions for the two lines of the X
-            diagonals = [
-                # upper-left to lower-right, upper-right to lower-left
-                [(-1, -1), (1, 1)],  # First diagonal
-                [(-1, 1), (1, -1)]   # Second diagonal
-            ]
-            
-            # Check each diagonal pair
-            for d1_start, d1_end in diagonals[0]:
-                for d2_start, d2_end in diagonals[1]:
-                    # Check if we can form valid MAS/SAM patterns in both diagonals
-                    if (
-                        (check_mas(grid, i+d1_start, j+d1_start, -d1_start, -d1_start) and
-                         check_mas(grid, i+d2_start, j+d2_start, -d2_start, -d2_start))
-                    ):
-                        count += 1
-                        break  # Found one valid X-MAS pattern, move to next center point
+            # Try all combinations for the X pattern
+            found = False
+            for ul_forward in [True, False]:  # upper-left to lower-right can be forward or backward
+                for ur_forward in [True, False]:  # upper-right to lower-left can be forward or backward
+                    # Check upper-left to lower-right diagonal
+                    ul_valid = check_mas(grid, i-1, j-1, 1, 1) if ul_forward else check_mas(grid, i+1, j+1, -1, -1)
                     
+                    # Check upper-right to lower-left diagonal
+                    ur_valid = check_mas(grid, i-1, j+1, 1, -1) if ur_forward else check_mas(grid, i+1, j-1, -1, 1)
+                    
+                    if ul_valid and ur_valid:
+                        found = True
+                        break
+                if found:
+                    break
+            
+            if found:
+                count += 1
+    
     return count
 
 def solve_puzzle(input_text):
@@ -83,6 +82,7 @@ def solve_puzzle(input_text):
     
     return xmas_count, x_mas_count
 
+# Read from file and solve
 try:
     with open('4.txt', 'r') as file:
         puzzle_input = file.read()
