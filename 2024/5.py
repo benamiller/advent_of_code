@@ -32,7 +32,7 @@ def solve():
     rule_lines = []
     update_lines = []
 
-    with open('5test.txt', 'r') as file:
+    with open('5.txt', 'r') as file:
         lines = file.readlines()
         i = 0
         while i < len(lines):
